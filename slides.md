@@ -65,13 +65,17 @@ layout: intro
 
 ---
 
-* Before we get into SSR, let's have a look at SPAs
+# Web Development changes quickly!
+
+<VClicks>
 
 * From Static HTML files (back in the days)
-* To Dynamic pages rendered via Java, PHP or .NET (or similar) - Multi Page Aplications
+* To dynamic pages rendered via Java, PHP or .NET (or similar) - Multi Page Aplications
 * In the last years, we've seen a huge shift towards Single Page Applications (SPAs)
 * Both, MPAs and SPAs have their pros and cons
-* To get the "best of both worlds", we can use SSR
+* To get the "best of both worlds", we can use different rendering concepts, e.g. SSR
+
+</VClicks>
 
 ---
 
@@ -109,7 +113,7 @@ layout: intro
 
 <div class="flex justify-center" v-click>
 
-```mermaid{scale:0.70, showSequenceNumbers: true}
+```mermaid{scale:0.65, showSequenceNumbers: true}
 sequenceDiagram
     Browser->>+Server: Request /about/
     Server->>+Database: Query content for /about/
@@ -206,7 +210,7 @@ sequenceDiagram
 * Accessibility
   * <mdi-close class="text-red-500" /> SPA: Needs more caution and extra work
   * <mdi-check class="text-green-500" /> MPA: Fine out of the box
-  
+
 </VClicks>
 
 <!--
@@ -240,6 +244,294 @@ DX:
 </VClicks>
 
 ---
+layout: intro
+---
+
+# Rendering Concepts
+Let's have a look!
+
+---
+
+# Rendering Concepts
+
+<VClicks depth="2">
+
+* MPAs
+  * Traditional SSR
+  * HTML-centric Rendering
+  * Traditional SSR + Progressive Enhancement
+* SPAs
+  * Client Side Rendering
+  * Modern SSR / Isomorphic Rendering
+
+</VClicks>
+
+<!-- 
+
+* We know how Traditional SSR and pure Client-Side Rendering works already
+
+-->
+
+---
+
+# HTML-centric rendering
+
+<VClicks depth="2">
+
+* Initial request as for Traditional SSR
+* Per interactive components:
+
+</VClicks>
+
+<VClick at="1">
+
+```mermaid{scale:0.70, showSequenceNumbers: true}
+sequenceDiagram
+    Browser->>+API: API call (WebSockets/HTTP)<br> to render Counter component with new value
+    API->>-Browser: Return HTML for new counter component
+    Browser->>+Browser: Insert/Replace the HTML in the DOM
+```
+
+</VClick>
+
+---
+
+# HTML-centric rendering II
+
+* <mdi-check class="text-green-500" /> Little JavaScript needed
+
+<VClicks>
+
+* <mdi-check class="text-green-500" /> Stick to framework/backend model
+* <mdi-close class="text-red-500" /> Very new concept
+* <mdi-close class="text-red-500" /> No mature ecosystem
+* <mdi-close class="text-red-500" /> Not Framework-agnostic
+* <mdi-close class="text-red-500" /> JS might be needed eventually
+
+</VClicks>
+
+---
+
+# Traditional SSR + Progressive Enhancement
+
+<VClicks depth="2">
+
+* Request logic stays the same
+* On the client side, we use JavaScript to enhance the page, not to render it
+* Idea: Provide as many functionalities as possible to as many users as possible
+  * Example: Image Slider
+  * Option 1: Use JavaScript to fetch the images and render the slider
+  * Option 2: Provide the images via server-rendered HTML and use JavaScript to enhance the slider
+* Progressive Enhancement would be Option 2
+  * <mdi-check class="text-green-500" /> Works without JavaScript
+  * <mdi-check class="text-green-500" /> Improves functionalities when the user has JavaScript enabled
+* Not only for JavaScript enabled/disabled, (e.g. for low battery / bad connection)
+* <mdi-check class="text-green-500" /> Provides great accessibility out of the box (as data will be there)
+* <mdi-close class="text-red-500" /> Works best for lighweight frontend applications (not frontend-heavy)
+
+</VClicks>
+
+---
+
+# Modern SSR / Isomorphic Rendering I
+
+<VClicks depth="2">
+
+* Combination of Traditional SSR and Client-Side Rendering
+* Initial request as for Traditional SSR
+* Subsequent requests work as SPA
+
+</VClicks>
+
+---
+
+<div class="flex justify-center">
+
+```mermaid{scale:0.65, showSequenceNumbers: true}
+sequenceDiagram
+    Client->>+Server: Requests /initial/
+    Server->>+API: API call (if data needed)
+    API->>-Server: Return data (usually JSON)
+    Server->>Server: Continue rendering to HTML string
+    Server->>-Client: Return HTML file with content, JavaScript and CSS
+    note right of Client: Site is now visible
+    Client->>+Client: Parse JavaScript and hydration
+    note right of Client: Site is now interactive
+```
+
+</div>
+
+---
+
+# Modern SSR / Isomorphic Rendering II
+
+<VClicks>
+
+* <mdi-check class="text-green-500" /> Stick to framework/language model (SPA)
+* <mdi-check class="text-green-500" /> Serve HTML on initial request
+* <mdi-check class="text-green-500" /> Only load files/data if needed
+* <mdi-check class="text-green-500" /> No "click and wait"
+* <mdi-check class="text-green-500" /> Use the full power of the JS ecosystem
+* <mdi-close class="text-red-500" /> Setup can be more complex (or support of a framework)
+* <mdi-close class="text-red-500" /> High TTFB (if uncached)
+* <mdi-close class="text-red-500" /> Adds more complexity (code runs on server and client)
+* <mdi-close class="text-red-500" /> Some libraries might not support SSR
+* <mdi-close class="text-red-500" /> Hydration is CPU intensive
+
+</VClicks>
+
+---
+
+# Choosing a rendering concept
+
+<VClicks depth="2">
+
+* Lots of options, depends on your use case and app requirements
+* When deciding in favor of Traditional SSR, there is no reason to not use the Progressive Enhancement approach
+* When considering HTML-centric rendering, be aware of the ecosystem limitations. Also a good pick when you want to avoid JavaScript as much as possible
+* Client-side rendering might suffice if you build content behind authentication (e.g. dashboards)
+* Modern SSR is a good choice for a big range of applications, from complex web applications to simple landing pages.
+
+</VClicks>
+
+---
+layout: intro
+---
+
+# SSR Subtypes
+
+Because SSR is a whole family of concepts, let's have a look at the different subtypes!
+
+---
+
+# SSR Subtypes
+
+<VClicks>
+
+* Dynamic / on the fly (seen so far)
+* Prerendering / SSG
+* Incremental Static (Re-)Generation
+
+</VClicks>
+
+---
+
+# Prerendering / SSG - Build step
+Process of generating static HTML files at build time (not at runtime)
+
+<div v-click class="flex justify-center">
+
+```mermaid{scale:0.6, showSequenceNumbers: true}
+sequenceDiagram
+    Server->>Server: Request to /initial
+    note right of Server: SSR starts
+    Server->>+API: Request data
+    API->>-Server: Return JSON
+    note right of Server: Continue rendering
+    Server->>Server: Output static HTML file to /initial.html
+```
+
+</div>
+
+---
+
+# Prerendering / SSG - Initial Request
+
+<div class="flex justify-center">
+
+```mermaid{scale:0.7, showSequenceNumbers: true}
+sequenceDiagram
+    Browser->>+CDN: Request /initial/
+    CDN->>Browser: Send static HTML file (with data) + JS and CSS
+    note right of Browser: Site is visible for the user
+    Browser->>Browser: JS parsing and hydration
+    note right of Browser: App now works as SPA and is interactive
+```
+
+</div>
+
+---
+
+# Prerendering / SSG - Pros and Cons
+
+<VClicks>
+
+* <mdi-check class="text-green-500" /> Fastest initial request
+* <mdi-check class="text-green-500" /> Replaces API calls during SSR with static data
+* <mdi-check class="text-green-500" /> No server for frontend needed
+* <mdi-close class="text-red-500" /> Needs rebuild for data change
+* <mdi-close class="text-red-500" /> Build time proportional to page count
+
+</VClicks>
+
+---
+
+# Incremental Static (Re-)Generation
+Evolved from combining dynamic SSR and SSG
+
+<div v-click class="flex justify-center">
+
+```mermaid{scale:0.5, showSequenceNumbers: true}
+sequenceDiagram
+    Client->>+Server: Requests /initial/
+    Server->>+API: API call (if data needed)
+    API->>-Server: Return data (usually JSON)
+    Server->>Server: Continue rendering to HTML string, then save in cache
+    Server->>-Client: Return static HTML file with rendered content,<br>JavaScript and CSS (from here as for dynamic SSR)
+    note right of Client: When another initial request happens (same/other client)
+    Client->>+Server: Requests /initial/
+    Server->>-Client: Return static HTML file from cache
+```
+
+</div>
+
+
+---
+
+# Hybrid
+
+<VClicks>
+
+* Nowadays, mixing the SSR subtypes is supported by frameworks such as Nuxt <logos-nuxt-icon /> or Next.js <logos-nextjs-icon />
+* This allows to apply the best-fitting subtype per page and improve UX and performance
+
+</VClicks>
+
+<Code v-click file="nuxt.config.ts">
+
+```js
+export default defineNuxtConfig({
+  // ...
+  routeRules: {
+    '/admin/**': { ssr: false },
+    '/statistics/**': { swr: 600 },
+    '/product/**': { swr: true },
+    '/blog/**': { static: true },
+    '/': { prerender: true }
+  }
+})
+```
+
+</Code>
+
+
+---
+
+# Outlook and Conclusion
+
+<VClicks depth="2">
+
+* There are two app types: MPAs and SPAs
+* Both have various rendering concepts
+* Modern SSR is one of them and a viable choice
+* It has big benefits when SEO, Accessibility and Performance are important concerns
+* There are still unsolved issues with regards to SSR
+    * Reduce/improve Hydration process
+    * Waterfalls when requesting data
+    * Streaming SSR results (not waiting until string is fully resolved)
+* These can be topics for subsequent scientific papers
+
+</VClicks>
 
 ---
 layout: two-cols
@@ -271,3 +563,15 @@ heading: Thank you for your attention!
     @apply space-y-2 mt-10 text-xl h-full;
   }
 </style>
+
+---
+layout: image
+image: /stage-back.jpg
+---
+
+<div class="flex w-full justify-center">
+
+
+# Q & A Time!
+
+</div>
